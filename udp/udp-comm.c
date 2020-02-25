@@ -38,8 +38,6 @@ main()
 for(;;){
 
 	if (recv(sockRecv, buf, sizeof(buf), MSG_DONTWAIT) > 0) {
-	// buf[0] = 2;
-        // recv(sockRecv, buf, sizeof(buf), MSG_DONTWAIT);
 		if (buf[0] == 0) { // we can receive only Message 0.
 			for (i = 1; i < 9; i++) {
 				view3Recv[i] = (buf[i * 4 + 3] << 24) + (buf[i * 4 + 2] << 16) + (buf[i * 4 + 1] << 8) + (buf[i * 4]);
@@ -48,24 +46,24 @@ for(;;){
 			printf("\n");
 			view3Send[1] = view3Recv[1] + 1;	// seq number
 		}
-	}
-			buf[0] = 0;
-			buf[1] = 36;
-			buf[2] = 0;
-			buf[3] = 0; // checkSum;
-			for (i = 1; i < 9; i++) {
-				buf[i * 4    ] =  view3Send[i]        & 0xff;
-				buf[i * 4 + 1] = (view3Send[i] >>  8) & 0xff;
-				buf[i * 4 + 2] = (view3Send[i] >> 16) & 0xff;
-				buf[i * 4 + 3] = (view3Send[i] >> 24) & 0xff;
-			}
-			checkSum = 0;
-			for (i = 0; i < 36; i++) checkSum += buf[i];
-			buf[3] = 0xff - checkSum;
-			// printf("checkSum = %d\n", checkSum);
-			sendto(sockSend, buf, 36, 0, (struct sockaddr *)&addrSend, sizeof(addrSend));
-}
+		buf[0] = 0;
+		buf[1] = 36;
+		buf[2] = 0;
+		buf[3] = 0; // checkSum;
+		for (i = 1; i < 9; i++) {
+			buf[i * 4    ] =  view3Send[i]        & 0xff;
+			buf[i * 4 + 1] = (view3Send[i] >>  8) & 0xff;
+			buf[i * 4 + 2] = (view3Send[i] >> 16) & 0xff;
+			buf[i * 4 + 3] = (view3Send[i] >> 24) & 0xff;
+		}
+		checkSum = 0;
+		for (i = 0; i < 36; i++) checkSum += buf[i];
+		buf[3] = 0xff - checkSum;
+		// printf("checkSum = %d\n", checkSum);
+		sendto(sockSend, buf, 36, 0, (struct sockaddr *)&addrSend, sizeof(addrSend));
 
+	}
+}
 	close(sockSend);
 	close(sockRecv);
 
