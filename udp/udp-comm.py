@@ -18,10 +18,11 @@ class udpcomm():
     #                           [00][01][02][03][04][05][06][07][08]
     self.view3Send = [00,00,00,00, 21,22,23,24, 31,32,33,34, 41,42,43,44,
                       51,52,53,54, 61,62,63,64, 71,72,73,74, 81,82,83,84]
+    self.view3Recv = []
     self.data = []
 
 
-    print("recvADDRESS: ", self.recvADDRESS, ", recvPORT: ", self.recvPORT)
+    # print("recvADDRESS: ", self.recvADDRESS, ", recvPORT: ", self.recvPORT)
     self.BUFSIZE = 1024
     self.recv = socket(AF_INET, SOCK_DGRAM)
     self.recv.bind((self.recvADDRESS, self.recvPORT))
@@ -53,18 +54,16 @@ class udpcomm():
     self.data = tmpData
     sendData =s.pack(*self.data)
     self.send.sendto(sendData, (self.sendADDRESS, self.sendPORT))
-    print("send:", len(self.data), "(" , self.sendADDRESS, ",", self.sendPORT, ")", end="")
-    for i in range(len(self.data)):
-      print(format(self.data[i], '02x'), end="")
-    print()
+    # print("send:", len(self.data), "(" , self.sendADDRESS, ",", self.sendPORT, ")", end="")
+    # for i in range(len(self.data)):
+    #   print(format(self.data[i], '02x'), end="")
+    # print()
 
   def receiver(self):
     data, addr = self.recv.recvfrom(self.BUFSIZE)
-    # print(data.decode(), addr)
-    print("recv:", len(data), addr, "", end="")
-    for i in range(len(data)):
-      print(format(data[i], '02x'), end="")
-    print()
+    # for i in range(4, len(data)):
+    #   self.view3Recv[i - 4] = data[i]
+    self.view3Recv = [data[i] for i in range(4, len(data))]
     self.view3Send[0] = data[4] + 1;
     if (self.view3Send[0] > 255):
       self.view3Send[0] = 0
