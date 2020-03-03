@@ -7,9 +7,11 @@
 int view3Send[9], view3Recv[9];
 
 int
-main()
+main(int argc, char *argv[])
 {
 	int sockSend, sockRecv;
+	int portSend, portRecv;
+	char IPSend[16], IPRecv[16];
 	int i;
 	int yes = 1;
 	struct sockaddr_in addrSend, addrRecv;
@@ -20,16 +22,29 @@ main()
 
 	sockSend = socket(AF_INET, SOCK_DGRAM, 0);
 
+	if (argc != 5) {
+		portSend = 9180; portRecv = 9182;
+		strcpy(IPSend, "127.0.1.1");
+	        strcpy(IPRecv, "127.0.1.1");
+	} else {
+		strcpy(IPSend, argv[1]);
+		portSend = atoi(argv[2]);
+		strcpy(IPRecv, argv[3]);
+		portRecv = atoi(argv[4]);
+	}
+
+	printf("UDP connection: send %s:%d, recv %s:%d\n", IPSend, portSend, IPRecv, portRecv);
+
 	addrSend.sin_family = AF_INET;
-	addrSend.sin_port = htons(9180);
-	addrSend.sin_addr.s_addr = inet_addr("127.0.1.1");
+	addrSend.sin_port = htons(portSend);
+	addrSend.sin_addr.s_addr = inet_addr(IPSend);
 	// addr.sin_addr.s_addr = inet_addr("255.255.255.255");
 	setsockopt(sockSend, SOL_SOCKET, SO_BROADCAST, (char *)&yes, sizeof(yes));
 
 	sockRecv = socket(AF_INET, SOCK_DGRAM, 0);
 	addrRecv.sin_family = AF_INET;
-	addrRecv.sin_port = htons(9182);
-	addrRecv.sin_addr.s_addr = inet_addr("127.0.1.1"); // INADDR_ANY;
+	addrRecv.sin_port = htons(portRecv);
+	addrRecv.sin_addr.s_addr = inet_addr(IPRecv); // INADDR_ANY;
 	bind(sockRecv, (struct sockaddr *)&addrRecv, sizeof(addrRecv));
 
 	memset(buf, 0, sizeof(buf));
@@ -37,7 +52,8 @@ main()
 
 for(;;){
 
-	if (recv(sockRecv, buf, sizeof(buf), MSG_DONTWAIT) > 0) {
+	printf("start\n");
+	if (recv(sockRecv, buf, sizeof(buf), MSG_WAITALL) > 0) {
 		if (buf[0] == 0) { // we can receive only Message 0.
 			for (i = 1; i < 9; i++) {
 				view3Recv[i] = (buf[i * 4 + 3] << 24) + (buf[i * 4 + 2] << 16) + (buf[i * 4 + 1] << 8) + (buf[i * 4]);
@@ -59,10 +75,11 @@ for(;;){
 		checkSum = 0;
 		for (i = 0; i < 36; i++) checkSum += buf[i];
 		buf[3] = 0xff - checkSum;
-		// printf("checkSum = %d\n", checkSum);
+		printf("checkSum = %d\n", checkSum);
 		sendto(sockSend, buf, 36, 0, (struct sockaddr *)&addrSend, sizeof(addrSend));
 
 	}
+	// sleep(0.1);
 }
 	close(sockSend);
 	close(sockRecv);

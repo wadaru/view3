@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 import struct
 import time
+import sys
 from socket import socket, AF_INET, SOCK_DGRAM
 
 class udpsend():
-  def __init__(self):
+  def __init__(self, sADDRESS = "127.0.1.1", sPORT = 9180, rADDRESS = "127.0.1.1", rPORT = 9182):
 
     self.HOST = ''
-    self.sendPORT = 9180
-    self.recvPORT = 9182
-    self.sendADDRESS = "127.0.1.1"
-    self.recvADDRESS = "127.0.1.1"
+    self.sendPORT = int(sPORT) # 9180
+    self.recvPORT = int(rPORT) # 9182
+    self.sendADDRESS = sADDRESS # "127.0.1.1"
+    self.recvADDRESS = rADDRESS # "127.0.1.1"
 
     self.send = socket(AF_INET, SOCK_DGRAM)
     self.view3Send = struct.Struct("!BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
@@ -20,6 +21,7 @@ class udpsend():
     self.data = []
 
 
+    print("recvADDRESS: ", self.recvADDRESS, ", recvPORT: ", self.recvPORT)
     self.BUFSIZE = 1024
     self.recv = socket(AF_INET, SOCK_DGRAM)
     self.recv.bind((self.recvADDRESS, self.recvPORT))
@@ -70,7 +72,24 @@ class udpsend():
   def closer(self):
     self.send.close()
 
-udp = udpsend()
+#
+# main
+#
+args = sys.argv
+if (len(args) == 5):
+  sendADDRESS = args[1]
+  sendPORT    = args[2]
+  recvADDRESS = args[3]
+  recvPORT    = args[4] 
+else:
+  sendPORT = 9180
+  recvPORT = 9182
+  sendADDRESS = "127.0.1.1"
+  recvADDRESS = "127.0.1.1"
+
+print("sendADD:", sendADDRESS, ", sendPORT:", sendPORT)
+print("recvADD:", recvADDRESS, ", recvPORT:", recvPORT)
+udp = udpsend(sendADDRESS, sendPORT, recvADDRESS, recvPORT)
 while True:
   udp.receiver()
   udp.sender()
