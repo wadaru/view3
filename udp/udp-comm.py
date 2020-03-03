@@ -4,7 +4,7 @@ import time
 import sys
 from socket import socket, AF_INET, SOCK_DGRAM
 
-class udpsend():
+class udpcomm():
   def __init__(self, sADDRESS = "127.0.1.1", sPORT = 9180, rADDRESS = "127.0.1.1", rPORT = 9182):
 
     self.HOST = ''
@@ -75,25 +75,26 @@ class udpsend():
 #
 # main
 #
-args = sys.argv
-if (len(args) == 5):
-  sendADDRESS = args[1]
-  sendPORT    = args[2]
-  recvADDRESS = args[3]
-  recvPORT    = args[4] 
-else:
-  sendPORT = 9180
-  recvPORT = 9182
-  sendADDRESS = "127.0.1.1"
-  recvADDRESS = "127.0.1.1"
+if __name__ == '__main__':
+  args = sys.argv
+  if (len(args) == 5):
+    sendADDRESS = args[1]
+    sendPORT    = args[2]
+    recvADDRESS = args[3]
+    recvPORT    = args[4] 
+  else:
+    sendPORT = 9180
+    recvPORT = 9182
+    sendADDRESS = "127.0.1.1"
+    recvADDRESS = "127.0.1.1"
 
-print("sendADD:", sendADDRESS, ", sendPORT:", sendPORT)
-print("recvADD:", recvADDRESS, ", recvPORT:", recvPORT)
-udp = udpsend(sendADDRESS, sendPORT, recvADDRESS, recvPORT)
-while True:
-  udp.receiver()
-  udp.sender()
-  time.sleep(0.1)
-udp.closer()
+  print("sendADD:", sendADDRESS, ", sendPORT:", sendPORT)
+  print("recvADD:", recvADDRESS, ", recvPORT:", recvPORT)
+  udp = udpcomm(sendADDRESS, sendPORT, recvADDRESS, recvPORT)
+  while True:
+    udp.receiver()
+    udp.sender()
+    time.sleep(0.1)
+  udp.closer()
 
 
