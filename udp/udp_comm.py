@@ -70,6 +70,8 @@ class udpcomm():
                          + (int(data[i * 4 + 4 + 1].encode('hex'), 16) <<  8)
                          + (int(data[i * 4 + 4 + 2].encode('hex'), 16) << 16)
                          + (int(data[i * 4 + 4 + 3].encode('hex'), 16) << 24))
+      if (self.view3Recv[i] >= (1 << 31)):
+        self.view3Recv[i]  -= (1 <<32)
       # print (self.view3Recv[i])
 
     # self.view3Send[0] = data[4] + 1;
