@@ -15,10 +15,12 @@ class udpcomm():
 
     self.send = socket(AF_INET, SOCK_DGRAM)
     self.view3Send = struct.Struct("!BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+    self.view3Recv = struct.Struct("!BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
     #                           [00][01][02][03][04][05][06][07][08]
     self.view3Send = [00,00,00,00, 21,22,23,24, 31,32,33,34, 41,42,43,44,
                       51,52,53,54, 61,62,63,64, 71,72,73,74, 81,82,83,84]
-    self.view3Recv = []
+    self.view3Recv = [00,00,00,00, 00,00,00,00, 00,00,00,00, 00,00,00,00,
+                      00,00,00,00, 00,00,00,00, 00,00,00,00, 00,00,00,00]
     self.data = []
 
 
@@ -60,11 +62,18 @@ class udpcomm():
     # print()
 
   def receiver(self):
+    s = struct.Struct("!B")
     data, addr = self.recv.recvfrom(self.BUFSIZE)
-    # for i in range(4, len(data)):
-    #   self.view3Recv[i - 4] = data[i]
-    self.view3Recv = [data[i] for i in range(4, len(data))]
-    self.view3Send[0] = data[4] + 1;
+
+    for i in range(8):
+      self.view3Recv[i] = ((int(data[i * 4 + 4 + 0].encode('hex'), 16)      )
+                         + (int(data[i * 4 + 4 + 1].encode('hex'), 16) <<  8)
+                         + (int(data[i * 4 + 4 + 2].encode('hex'), 16) << 16)
+                         + (int(data[i * 4 + 4 + 3].encode('hex'), 16) << 24))
+      # print (self.view3Recv[i])
+
+    # self.view3Send[0] = data[4] + 1;
+    self.view3Send[0] = self.view3Recv[0] + 1;
     if (self.view3Send[0] > 255):
       self.view3Send[0] = 0
 
