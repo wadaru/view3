@@ -18,7 +18,7 @@ main(int argc, char *argv[])
 
 	for(i = 1; i < 9; i++) view3Send[i] = i + 10;
 	unsigned char buf[256];
-	int checkSum;
+	unsigned char checkSum;
 
 	sockSend = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -76,7 +76,7 @@ for(;;){
 		for (i = 0; i < 36; i++) checkSum += buf[i];
 		buf[3] = 0xff - checkSum;
 		printf("checkSum = %d\n", checkSum);
-		sendto(sockSend, buf, 36, 0, (struct sockaddr *)&addrSend, sizeof(addrSend));
+		printf("sendto: %d\n", sendto(sockSend, buf, 36, 0, (struct sockaddr *)&addrSend, sizeof(addrSend)));
 
 	}
 	// sleep(0.1);
