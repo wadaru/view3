@@ -27,11 +27,11 @@ class udpsend():
     for i in range(4, 9 * 4, 4):
       if (self.view3Send[i - 4] < 0):
         self.view3Send[i - 4] = ((-self.view3Send[i - 4]) ^ 0xffffffff) + 1
-      if (self.view3Send[i - 4] > 255):
-        self.view3Send[i - 1] = (self.view3Send[i - 4] & 0xff000000) >> 24
-        self.view3Send[i - 2] = (self.view3Send[i - 4] & 0x00ff0000) >> 16
-        self.view3Send[i - 3] = (self.view3Send[i - 4] & 0x0000ff00) >>  8
-        self.view3Send[i - 4] = (self.view3Send[i - 4] & 0x000000ff)
+      # if (self.view3Send[i - 4] > 255):
+      self.view3Send[i - 1] = (self.view3Send[i - 4] & 0xff000000) >> 24
+      self.view3Send[i - 2] = (self.view3Send[i - 4] & 0x00ff0000) >> 16
+      self.view3Send[i - 3] = (self.view3Send[i - 4] & 0x0000ff00) >>  8
+      self.view3Send[i - 4] = (self.view3Send[i - 4] & 0x000000ff)
 
     for i in range(4, 9 * 4):
       # print(i)
