@@ -2,9 +2,14 @@
 import struct
 import time
 import sys
+import rospy
+from geometry_msgs.msg import Pose
 from socket import socket, AF_INET, SOCK_DGRAM
+from std_msgs.msg import Float32
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Bool
 
-class udpcomm():
+class Udpcomm():
   def __init__(self, sADDRESS = "127.0.1.1", sPORT = 9180, rADDRESS = "127.0.1.1", rPORT = 9182):
 
     self.HOST = ''
@@ -40,7 +45,7 @@ class udpcomm():
       self.view3Send[i - 1] = (self.view3Send[i - 4] & 0xff000000) >> 24
       self.view3Send[i - 2] = (self.view3Send[i - 4] & 0x00ff0000) >> 16
       self.view3Send[i - 3] = (self.view3Send[i - 4] & 0x0000ff00) >>  8
-      self.view3Send[i - 4] = (self.view3Send[i - 4] & 0x000000ff)
+      self.view3Send[i - 4] = (self.view3Send[i - 4] & 0x000000ff) 
 
     for i in range(4, 9 * 4):
       # print(i)
